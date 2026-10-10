@@ -12,15 +12,12 @@ import {
   getElementSummary,
   getSelectionVerdict,
   getLeagueTable,
-  getCurrentGameweekFixtures,
   getEntryInfo,
   getEntryPicks,
   getPlayerRecommendation,
   getTopRecommendationsByPosition,
   isGameweekLive,
   getRealDifferentials,
-  getTopScorers,
-  getTopAssisters,
   getFixtureSwingPicks,
 } from './fpl-data.js';
 
@@ -64,7 +61,6 @@ async function init() {
 
   renderMasthead();
   renderGreeting();
-  renderLiveScores();
   renderFixtureTicker();
   renderLeagueTable();
   wireUpTableFilters();
@@ -73,7 +69,6 @@ async function init() {
   renderCleanSheetWatch();
   renderRecommendations();
   renderFixtureSwingPicks();
-  renderGoalsAssists();
   renderMySquad();
   populatePlayerList();
   wireUpLookup();
@@ -141,60 +136,6 @@ function wireUpTableFilters() {
       renderLeagueTable();
     });
   });
-}
-
-// ---------------------------------------------------------------------
-// Live scores ticker (this gameweek - live and finished matches only)
-// ---------------------------------------------------------------------
-
-function buildScoreItemHtml(f, showGwChip = false) {
-  const home = teamsById.get(f.team_h);
-  const away = teamsById.get(f.team_a);
-
-  let statusHtml;
-  let isLive = false;
-  if (f.finished_provisional) {
-    statusHtml = '<span class="score-status">FT</span>';
-  } else if (f.started) {
-    isLive = true;
-    statusHtml = '<span class="score-status"><span class="live-dot"></span> LIVE</span>';
-  } else {
-    const kickoff = new Date(f.kickoff_time);
-    const timeStr = kickoff.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-    statusHtml = `<span class="score-status score-status-upcoming">${timeStr}</span>`;
-  }
-
-  const homeScore = f.team_h_score != null ? f.team_h_score : '-';
-  const awayScore = f.team_a_score != null ? f.team_a_score : '-';
-  const gwChip = showGwChip ? `<span class="score-gw-chip">GW${f.event}</span>` : '';
-
-  return `
-    <div class="score-item${isLive ? ' is-live' : ''}">
-      ${gwChip}
-      ${badgeImgHtml(home)}<span>${home.short_name}</span>
-      <span class="score-value">${homeScore}</span>
-      <span>–</span>
-      <span class="score-value">${awayScore}</span>
-      <span>${away.short_name}</span>${badgeImgHtml(away)}
-      ${statusHtml}
-    </div>
-  `;
-}
-
-function renderLiveScores() {
-  const track = document.getElementById('scores-track');
-  const gwFixtures = getCurrentGameweekFixtures(bootstrap, fixtures)
-    .filter((f) => f.started); // live or finished only - no upcoming here
-
-  if (gwFixtures.length === 0) {
-    track.innerHTML = '<p class="empty-text">No live or finished matches yet this gameweek.</p>';
-    return;
-  }
-
-  const itemsHtml = gwFixtures.map((f) => buildScoreItemHtml(f, false)).join('');
-
-  // Duplicate the content once so the CSS animation (translateX -50%) loops seamlessly.
-  track.innerHTML = itemsHtml + itemsHtml;
 }
 
 // ---------------------------------------------------------------------
@@ -509,34 +450,6 @@ function renderFixtureSwingPicks() {
       </div>
     `;
   }).join('');
-}
-
-// ---------------------------------------------------------------------
-// Transfer planner
-// ---------------------------------------------------------------------
-
-// ---------------------------------------------------------------------
-// Goals & assists leaders
-// ---------------------------------------------------------------------
-
-function renderGoalsAssists() {
-  const scorers = getTopScorers(bootstrap, 8);
-  const assisters = getTopAssisters(bootstrap, 8);
-
-  const buildList = (players, statKey) => players.map((player, index) => {
-    const team = teamsById.get(player.team);
-    return `
-      <div class="leader-item clickable-player" data-player-id="${player.id}">
-        <span class="leader-rank">${index + 1}</span>
-        ${badgeImgHtml(team)}
-        <span class="leader-name">${player.web_name}</span>
-        <span class="leader-value">${player[statKey]}</span>
-      </div>
-    `;
-  }).join('');
-
-  document.getElementById('top-scorers-container').innerHTML = buildList(scorers, 'goals_scored');
-  document.getElementById('top-assisters-container').innerHTML = buildList(assisters, 'assists');
 }
 
 // ---------------------------------------------------------------------

@@ -267,24 +267,6 @@ export function getFixtureSwingPicks(bootstrap, fixtures, n = 3, maxDifficulty =
 }
 
 // ---------------------------------------------------------------------
-// Goals & assists leaders
-// ---------------------------------------------------------------------
-
-export function getTopScorers(bootstrap, count = 8) {
-  return bootstrap.elements
-    .filter((p) => p.minutes > 0)
-    .sort((a, b) => b.goals_scored - a.goals_scored)
-    .slice(0, count);
-}
-
-export function getTopAssisters(bootstrap, count = 8) {
-  return bootstrap.elements
-    .filter((p) => p.minutes > 0)
-    .sort((a, b) => b.assists - a.assists)
-    .slice(0, count);
-}
-
-// ---------------------------------------------------------------------
 // League table
 // ---------------------------------------------------------------------
 
@@ -519,26 +501,6 @@ export function getCaptainSuggestion(picksData, bootstrap, fixtures, outlooksByP
   }
 
   return best;
-}
-
-
-/**
- * Returns fixtures across the next N upcoming gameweeks (default 3),
- * starting from whichever gameweek hasn't started yet. Used for a
- * forward-looking fixtures view, separate from "this gameweek"'s
- * live/finished scores.
- */
-export function getUpcomingGameweeksFixtures(bootstrap, fixtures, numGameweeks = 3) {
-  const nextEvent = bootstrap.events.find((e) => e.is_next) ||
-    bootstrap.events.find((e) => !e.finished);
-  if (!nextEvent) return [];
-
-  const startId = nextEvent.id;
-  const endId = startId + numGameweeks - 1;
-
-  return fixtures
-    .filter((f) => f.event != null && f.event >= startId && f.event <= endId)
-    .sort((a, b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
 }
 
 // ---------------------------------------------------------------------
