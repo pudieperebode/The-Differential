@@ -148,10 +148,18 @@ export function getPlayerRecommendation(player, bootstrap, fixtures) {
   const reasons = [];
 
   // Availability check first - this can override everything else.
-  const chanceOfPlaying = player.chance_of_playing_this_round;
-  const isFlagged = chanceOfPlaying != null && chanceOfPlaying < 75;
+  // FPL marks unavailable players in more than one place, and a player who
+  // is out can have a blank chance_of_playing field, so check all of them:
+  // status (i = injured, s = suspended, u = unavailable, n = not in squad)
+  // and the lowest chance-of-playing value across this and next round.
+  const OUT_STATUS_LABELS = { i: 'Injured', s: 'Suspended', u: 'Unavailable', n: 'Not available' };
+  const isOutByStatus = player.status in OUT_STATUS_LABELS;
+  const chances = [player.chance_of_playing_this_round, player.chance_of_playing_next_round]
+    .filter((v) => v != null);
+  const lowestChance = chances.length ? Math.min(...chances) : null;
+  const isFlagged = isOutByStatus || (lowestChance != null && lowestChance < 75);
   if (isFlagged) {
-    reasons.push(player.news || 'Flagged as a doubt for the next match');
+    reasons.push(player.news || OUT_STATUS_LABELS[player.status] || 'Flagged as a doubt for the next match');
   }
 
   const reliability = getMinutesReliability(player, bootstrap);
