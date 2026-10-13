@@ -20,6 +20,7 @@ import {
   getRealDifferentials,
   getFixtureSwingPicks,
 } from './fpl-data.js';
+import { initSound } from './sound.js';
 
 const STORAGE_KEY_NAME = 'fpl_dashboard_name';
 const STORAGE_KEY_TEAM_ID = 'fpl_dashboard_team_id';
@@ -30,6 +31,7 @@ let teamsById, playersByName;
 
 applyTheme(localStorage.getItem(STORAGE_KEY_THEME) || 'light');
 wireUpThemeToggle();
+initSound();
 
 init();
 

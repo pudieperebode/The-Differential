@@ -23,9 +23,18 @@
         </div>
       </div>
       <div class="masthead-right">
-        <button class="theme-switch" id="theme-toggle" aria-label="Toggle dark mode">
-          <span class="theme-switch-thumb"></span>
-        </button>
+        <div class="masthead-controls">
+          <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="true" aria-label="Sound on, press to turn off" title="Sound on">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+              <path class="sound-waves" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>
+              <path class="sound-mute-x" d="M16 9l5 6M21 9l-5 6"/>
+            </svg>
+          </button>
+          <button class="theme-switch" id="theme-toggle" aria-label="Toggle dark mode">
+            <span class="theme-switch-thumb"></span>
+          </button>
+        </div>
         <div class="masthead-deadline">
           <p class="masthead-deadline-label">Deadline</p>
           <div id="deadline-date">—</div>

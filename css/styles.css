@@ -1007,3 +1007,49 @@ table.sheet tr:last-child td {
   color: var(--mid);
   padding: 14px 0;
 }
+
+/* ---------------------------------------------------------------- */
+/* Masthead controls: sound button beside the theme switch           */
+/* ---------------------------------------------------------------- */
+
+.masthead-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sound-toggle {
+  width: 30px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(246, 243, 234, 0.25);
+  border: none;
+  color: var(--pitch-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sound-toggle:hover {
+  background: rgba(246, 243, 234, 0.35);
+}
+
+.sound-toggle:focus-visible {
+  outline: 2px solid var(--pitch-text);
+  outline-offset: 2px;
+}
+
+.sound-toggle .sound-mute-x {
+  display: none;
+}
+
+.sound-toggle.is-muted .sound-waves {
+  display: none;
+}
+
+.sound-toggle.is-muted .sound-mute-x {
+  display: inline;
+}
